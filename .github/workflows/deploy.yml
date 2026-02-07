@@ -20,25 +20,22 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'npm'
-          
+          cache: 'yarn'
+
       - name: Install dependencies
-        run: npm ci
-        
+        run: yarn install --frozen-lockfile
+
       - name: Build for GitHub Pages
-        run: |
-          # Устанавливаем base для GitHub Pages
-          sed -i "s|base: './',|base: '/review-to-issue/',|g" vite.config.ts
-          npm run build
-          
+        run: yarn build --base /mospoly-rasp/
+
       - name: Setup Pages
         uses: actions/configure-pages@v4
-        
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
