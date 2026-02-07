@@ -21,6 +21,8 @@ interface LayoutProps {
 export function Layout({ children }: LayoutProps) {
   const data = useScheduleStore((s) => s.data);
   const error = useScheduleStore((s) => s.error);
+  const stale = useScheduleStore((s) => s.stale);
+  const cachedAt = useScheduleStore((s) => s.cachedAt);
   const viewMode = useSettingsStore((s) => s.viewMode);
   const filters = useSettingsStore((s) => s.filters);
   const [settingsOpen, setSettingsOpen] = useState(false);
@@ -93,10 +95,28 @@ export function Layout({ children }: LayoutProps) {
       </header>
 
       {/* Error */}
-      {error && (
+      {error && !stale && (
         <div className="max-w-2xl mx-auto px-4 mt-4">
           <div className="p-4 rounded-xl bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 text-sm">
             <span className="font-medium">Ошибка: </span>{error}
+          </div>
+        </div>
+      )}
+
+      {/* Stale cache banner */}
+      {stale && (
+        <div className="max-w-2xl mx-auto px-4 mt-4">
+          <div className="p-3 rounded-xl bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 text-amber-700 dark:text-amber-300 text-sm flex items-center gap-2">
+            <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span>
+              <span className="font-medium">Сервер недоступен.</span>{' '}
+              Показано кешированное расписание
+              {cachedAt && (
+                <> от {new Date(cachedAt).toLocaleString('ru-RU', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}</>
+              )}
+            </span>
           </div>
         </div>
       )}
